@@ -33,14 +33,18 @@ const App = () => {
   }, []);
 
   const handleLogin = () => {
+    console.log(`入力されたユーザー名: username`);
+    console.log(`入力されたパスワード: password`);
+
     if (username === dummyUser.username && password === dummyUser.password) {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
+      navigate('/');
     } else {
       alert('ユーザー名またはパスワードが間違っています。');
     }
   };
-
+  
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername('');

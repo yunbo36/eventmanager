@@ -40,37 +40,6 @@ const App = () => {
     localStorage.removeItem('isLoggedIn');
   };
 
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-          <h1 className="text-2xl font-bold mb-4 text-center text-gray-800">ログイン</h1>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 mb-2 border border-gray-300 rounded-md"
-            placeholder="ユーザー名"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 mb-4 border border-gray-300 rounded-md"
-            placeholder="パスワード"
-          />
-          <button
-            onClick={handleLogin}
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <LogIn className="inline mr-2" size={20} />
-            ログイン
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <Router>
       <div className="min-h-screen bg-gray-100">
@@ -85,13 +54,15 @@ const App = () => {
                 <BackButton />
               </div>
               <div className="flex items-center">
-                <button
-                  onClick={handleLogout}
-                  className="text-sm bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center"
-                >
-                  <LogOut className="mr-2" size={16} />
-                  ログアウト
-                </button>
+                {isLoggedIn && (
+                  <button
+                    onClick={handleLogout}
+                    className="text-sm bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center"
+                  >
+                    <LogOut className="mr-2" size={16} />
+                    ログアウト
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -100,12 +71,16 @@ const App = () => {
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <Routes>
             <Route path="/" element={<TopPage />} />
-            <Route path="/setup" element={<Setup />} />
+            <Route path="/pc-reception" element={<PCReception />} />
+            <Route
+              path="/setup"
+              element={isLoggedIn ? <Setup /> : <Navigate to="/login" />}
+            />
+            <Route path="/login" element={<LoginPage handleLogin={handleLogin} />} />
             <Route path="/file-upload" element={<FileUpload />} />
             <Route path="/shared-folder" element={<SharedFolder />} />
             <Route path="/user-registration" element={<UserRegistration />} />
             <Route path="/generated-paths" element={<GeneratedPaths />} />
-            <Route path="/pc-reception" element={<PCReception />} />
             <Route path="/path-navigation/:level" element={<PathNavigation />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -115,21 +90,51 @@ const App = () => {
   );
 };
 
+const LoginPage = ({ handleLogin }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center text-gray-800">ログイン</h1>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full p-2 mb-2 border border-gray-300 rounded-md"
+          placeholder="ユーザー名"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded-md"
+          placeholder="パスワード"
+        />
+        <button
+          onClick={() => handleLogin(username, password)}
+          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <LogIn className="inline mr-2" size={20} />
+          ログイン
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const BackButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   if (location.pathname === '/') {
     return null;
   }
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   return (
     <button
-      onClick={handleBack}
+      onClick={() => navigate(-1)}
       className="flex items-center text-gray-500 hover:text-gray-700"
     >
       <ArrowLeft className="mr-2" size={20} />

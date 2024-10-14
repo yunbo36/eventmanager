@@ -10,10 +10,11 @@ const Login = ({ setIsLoggedIn }) => {
   const dummyUser = { username: 'admin', password: 'password' };
 
   const handleLogin = () => {
+    console.log('ログイン処理開始'); // デバッグ用ログ
     if (username === dummyUser.username && password === dummyUser.password) {
       setIsLoggedIn(true);
       localStorage.setItem('isLoggedIn', 'true');
-      navigate('/');
+      navigate('/'); // トップページに遷移
     } else {
       alert('ユーザー名またはパスワードが間違っています。');
     }
